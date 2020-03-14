@@ -80,16 +80,13 @@ const useTicTacToeGameState = initialPlayer => {
   const [tiles, setTiles] = useState(emptyArray);
   const [currentPlayer, setCurrentPlayer] = useState(initialPlayer);
   const winner = getWinner(tiles, currentPlayer);
-  let gameEnded = false;
+  const freeTilesRemaining = tiles.filter(tile => tile === '').length;
+  const gameEnded = winner !== null || !freeTilesRemaining;
   
   const setTileTo = (tileIndex, player) => {
     // convertir el tile en la posición tileIndex al jugador seleccionado
     // ejemplo: setTileTo(0, 'X') -> convierte la primera casilla en 'X'
     if(!gameEnded){
-      const squares = Object.entries(document.querySelectorAll('.square'));
-      const tileElement = tileIndex.currentTarget;
-      tileIndex = Number(squares.find(element => element[1] === tileElement)[0]);
-      player = currentPlayer;
       if (tiles[tileIndex] === '') {
         setTiles([...tiles.slice(0, tileIndex), player, ...tiles.slice(tileIndex + 1)]);
         setCurrentPlayer(player === 'X' ? 'O' : 'X');
@@ -101,41 +98,38 @@ const useTicTacToeGameState = initialPlayer => {
     // Reiniciar el juego a su estado inicial
     setTiles(emptyArray);
   };
-  
-  const freeTilesRemaining = tiles.filter(tile => tile === '').length;
-  (winner !== null || !freeTilesRemaining) && (gameEnded = true);
 
   // por si no reconocen esta sintáxis, es solamente una forma más corta de escribir:
   // { tiles: tiles, currentPlayer: currentPlayer, ...}
-  return { tiles, winner, gameEnded, setTileTo, restart };
+  return { tiles, currentPlayer, winner, gameEnded, setTileTo, restart };
 };
 
 const TicTacToe = () => {
-  const { tiles, winner, gameEnded, setTileTo, restart } = useTicTacToeGameState('X');
+  const { tiles, currentPlayer, winner, gameEnded, setTileTo, restart } = useTicTacToeGameState('X');
   return (
     <>
       <div className="tictactoe">
-        /* Este componente debe contener la WinnerCard y 9 componentes Square, 
+        {/* Este componente debe contener la WinnerCard y 9 componentes Square, 
         separados en tres filas usando <div className="tictactoe-row">{...}</div> 
-        para separar los cuadrados en diferentes filas */
+        para separar los cuadrados en diferentes filas */}
         <WinnerCard
           show={gameEnded} winner={winner} onRestart={restart}
         />
       </div>
       <div className='tictactoe-row'>
-        <Square value={tiles[0]} onClick={setTileTo} />
-        <Square value={tiles[1]} onClick={setTileTo} />
-        <Square value={tiles[2]} onClick={setTileTo} />
+        <Square value={tiles[0]} onClick={() => setTileTo(0, currentPlayer)} />
+        <Square value={tiles[1]} onClick={() => setTileTo(1, currentPlayer)} />
+        <Square value={tiles[2]} onClick={() => setTileTo(2, currentPlayer)} />
       </div>
       <div className='tictactoe-row'>
-        <Square value={tiles[3]} onClick={setTileTo} />
-        <Square value={tiles[4]} onClick={setTileTo} />
-        <Square value={tiles[5]} onClick={setTileTo} />
+        <Square value={tiles[3]} onClick={() => setTileTo(3, currentPlayer)} />
+        <Square value={tiles[4]} onClick={() => setTileTo(4, currentPlayer)} />
+        <Square value={tiles[5]} onClick={() => setTileTo(5, currentPlayer)} />
       </div>
       <div className='tictactoe-row'>
-        <Square value={tiles[6]} onClick={setTileTo} />
-        <Square value={tiles[7]} onClick={setTileTo} />
-        <Square value={tiles[8]} onClick={setTileTo} />
+        <Square value={tiles[6]} onClick={() => setTileTo(6, currentPlayer)} />
+        <Square value={tiles[7]} onClick={() => setTileTo(7, currentPlayer)} />
+        <Square value={tiles[8]} onClick={() => setTileTo(8, currentPlayer)} />
       </div>
     </>
   );
