@@ -14,3 +14,14 @@ Hay dos tareas para completar en esta clase.
 La primera tarea consiste en completar el archivo `components/pages/TicTacToe.js`. Como en la clase anterior, este archivo contiene un componente que deben completar, aunque esta vez es más complicado. Si logran hacer la tarea, tendrán un juego de ta-te-ti funcional.
 
 La segunda tarea consiste en re-implementar la tarea del memo test usando react. No hay archivo definido para esto, deben crear uno propio en `compontents/pages` y agregarlo a la lista de navegación que mostramos en `App.js`. Los estilos de este y como lo arman queda a su criterio, el único requisito es que se muestre en el header y que sea funcional.
+
+# Devicons
+https://vorillaz.github.io/devicons/#/dafont
+
+# Importar imagenes
+https://stackoverflow.com/questions/53762640/how-to-import-all-images-from-a-folder-in-reactjs/53762705
+
+https://webpack.js.org/guides/dependency-management/#requirecontext
+
+# Timer
+https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
