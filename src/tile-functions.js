@@ -1,15 +1,11 @@
 import { defaultImg } from './imgs-array';
 
-export const activateTile = (tile, tiles, setTiles) => {
-    const tileIndex = tile.index;
-    tile.defaultImg = tile.hiddenImg;
-    tile.active = true;
-    setTiles(
-        [   ...tiles.slice(0, tileIndex),
-            tile,
-            ...tiles.slice(tileIndex + 1),    
-        ]
-    );
+export const getActiveTile = (tileIndex, tiles) => {
+    const tilesCopy = [...tiles];
+    const selectedTileCopy = tilesCopy[tileIndex];
+    selectedTileCopy.defaultImg = selectedTileCopy.hiddenImg;
+    selectedTileCopy.active = true;
+    return tilesCopy;
 };
 
 const resetActiveTiles = (tiles) => {

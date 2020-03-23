@@ -1,15 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import FancyButton from '../small/FancyButton';
 import createTilesArray from '../../array-functions';
-import { activateTile, onTileHit, onTileMiss } from '../../tile-functions';
+import { getActiveTile, onTileHit, onTileMiss } from '../../tile-functions';
 
 const GameStatus = ({className, tries, elapsedTime}) => {
     return (
         <div className={className}>
-            <span className='status'>{`Tries: ${tries}`}</span>
-            <span className='status'>{`Elapsed Time: ${elapsedTime} seconds`}</span>
+            <span className='status'>Tries: {tries}</span>
+            <span className='status'>Elapsed Time: {elapsedTime} seconds</span>
         </div>
     );
 };
@@ -59,7 +59,7 @@ const WinnerModal = ({className, show, tries, elapsedTime, restart = () => {} })
     return (
         <div className={className}>
             <span className='winner-modal-text'>
-                {`You have won the game, it took you ${tries} tries and ${show && elapsedTime} seconds.`}
+                You have won the game, it took you {tries} tries and {show && elapsedTime} seconds.
             </span>
             <FancyButton onClick={restart}>Play again?</FancyButton>
         </div>
@@ -86,15 +86,36 @@ const StyledWinnerModal = styled(WinnerModal)`
     }
 `;
 
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
+  
+    // Remember the latest callback.
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+  
+    // Set up the interval.
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }, [delay]);
+  }
+
 const useMemoTestGameState = () => {
     const [tiles, setTiles] = useState(createTilesArray);
     const [tries, setTries] = useState(0);
     const [seconds, setSeconds] = useState(0);
+    const ONE_SECOND = 1000;
     const [blockUserInput, setBlockUserInput] = useState(false);
     const gameEnded = tiles.every(tile => tile.grayedOut === true);
+
+    useInterval(() => setSeconds(seconds + 1), ONE_SECOND);
     const setTileTo = (selectedTile) => {
         if (!gameEnded && !selectedTile.active && !selectedTile.grayedOut && !blockUserInput){
-            activateTile(selectedTile, tiles, setTiles);
+            setTiles(getActiveTile(selectedTile.index, tiles));
             const activeTiles = tiles.filter(tile => tile.active === true);
             if (activeTiles.length !== 2) {
                 return;
@@ -111,19 +132,6 @@ const useMemoTestGameState = () => {
         setTries(0);
         setSeconds(0);
     };
-    
-    useEffect(() => {
-        let interval = null;
-        if (!gameEnded) {
-            interval = setInterval(() => {
-                setSeconds(seconds => seconds + 1);
-            }, 1000);
-        } else if (gameEnded && seconds !== 0) {
-            clearInterval(interval);
-        }
-        return () => clearInterval(interval);
-    }, [gameEnded, seconds]);
-    
     return { tiles, tries, setTileTo, gameEnded, restart, seconds };
 };
 
